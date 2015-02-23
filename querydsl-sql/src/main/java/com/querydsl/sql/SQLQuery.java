@@ -13,17 +13,21 @@
  */
 package com.querydsl.sql;
 
+import java.sql.Connection;
+
 import com.querydsl.core.DefaultQueryMetadata;
 import com.querydsl.core.QueryMetadata;
-import java.sql.Connection;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
 
 /**
  * SQLQuery is a JDBC based implementation of the {@link SQLCommonQuery}
  * interface
  *
+ * @param <T>
  * @author tiwe
  */
-public class SQLQuery extends AbstractSQLQuery<SQLQuery> {
+public class SQLQuery<T> extends AbstractSQLQuery<T, SQLQuery<T>> {
 
     /**
      * Create a detached SQLQuery instance The query can be attached via the
@@ -93,4 +97,15 @@ public class SQLQuery extends AbstractSQLQuery<SQLQuery> {
         return q;
     }
 
+    @Override
+    public <U> SQLQuery<U> select(Expression<U> expr) {
+        queryMixin.setProjection(expr);
+        return (SQLQuery<U>) this;
+    }
+
+    @Override
+    public SQLQuery<Tuple> select(Expression<?>... exprs) {
+        queryMixin.setProjection(exprs);
+        return (SQLQuery<Tuple>) this;
+    }
 }

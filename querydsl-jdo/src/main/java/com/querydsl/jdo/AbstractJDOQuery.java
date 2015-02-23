@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import com.mysema.commons.lang.CloseableIterator;
 import com.mysema.commons.lang.IteratorAdapter;
 import com.querydsl.core.*;
-import com.querydsl.core.support.ProjectableQuery;
+import com.querydsl.core.support.ProjectableQueryBase;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.FactoryExpression;
@@ -41,7 +41,7 @@ import com.querydsl.core.types.FactoryExpression;
  *
  * @param <Q>
  */
-public abstract class AbstractJDOQuery<Q extends AbstractJDOQuery<Q>> extends ProjectableQuery<Q> implements JDOQLQuery{
+public abstract class AbstractJDOQuery<Q extends AbstractJDOQuery<Q>> extends ProjectableQueryBase<Q> implements JDOQLQuery{
 
     private static final Logger logger = LoggerFactory.getLogger(JDOQuery.class);
 
@@ -271,13 +271,13 @@ public abstract class AbstractJDOQuery<Q extends AbstractJDOQuery<Q>> extends Pr
     }
 
     @Override
-    public SearchResults<Tuple> listResults(Expression<?>... args) {
+    public QueryResults<Tuple> listResults(Expression<?>... args) {
         return listResults(queryMixin.createProjection(args));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <RT> SearchResults<RT> listResults(Expression<RT> expr) {
+    public <RT> QueryResults<RT> listResults(Expression<RT> expr) {
         try {
             queryMixin.setProjection(expr);
             Query countQuery = createQuery(true);
@@ -287,9 +287,9 @@ public abstract class AbstractJDOQuery<Q extends AbstractJDOQuery<Q>> extends Pr
             if (total > 0) {
                 QueryModifiers modifiers = queryMixin.getMetadata().getModifiers();
                 Query query = createQuery(false);
-                return new SearchResults<RT>((List<RT>) execute(query, false), modifiers, total);
+                return new QueryResults<RT>((List<RT>) execute(query, false), modifiers, total);
             } else {
-                return SearchResults.emptyResults();
+                return QueryResults.emptyResults();
             }
         } finally {
             reset();

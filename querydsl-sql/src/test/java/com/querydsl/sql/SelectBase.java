@@ -743,7 +743,7 @@ public class SelectBase extends AbstractBaseTest {
     public void GroupBy_Count() {
         List<Integer> ids = query().from(employee).groupBy(employee.id).list(employee.id);
         long count = query().from(employee).groupBy(employee.id).count();
-        SearchResults<Integer> results = query().from(employee).groupBy(employee.id)
+        QueryResults<Integer> results = query().from(employee).groupBy(employee.id)
                 .limit(1).listResults(employee.id);
 
         assertEquals(10, ids.size());
@@ -756,7 +756,7 @@ public class SelectBase extends AbstractBaseTest {
     @ExcludeIn({FIREBIRD, SQLSERVER})
     public void GroupBy_Distinct_Count() {
         List<Integer> ids = query().from(employee).groupBy(employee.id).distinct().list(NumberTemplate.ONE);
-        SearchResults<Integer> results = query().from(employee).groupBy(employee.id)
+        QueryResults<Integer> results = query().from(employee).groupBy(employee.id)
                 .limit(1).distinct().listResults(NumberTemplate.ONE);
 
         assertEquals(1, ids.size());
@@ -971,7 +971,7 @@ public class SelectBase extends AbstractBaseTest {
 
     @Test
     public void ListResults() {
-        SearchResults<Integer> results = query().from(employee)
+        QueryResults<Integer> results = query().from(employee)
                 .limit(10).offset(1).orderBy(employee.id.asc())
                 .listResults(employee.id);
         assertEquals(10, results.getTotal());
@@ -979,7 +979,7 @@ public class SelectBase extends AbstractBaseTest {
 
     @Test
     public void ListResults2() {
-        SearchResults<Integer> results = query().from(employee)
+        QueryResults<Integer> results = query().from(employee)
                 .limit(2).offset(10).orderBy(employee.id.asc())
                 .listResults(employee.id);
         assertEquals(10, results.getTotal());
@@ -987,7 +987,7 @@ public class SelectBase extends AbstractBaseTest {
 
     @Test
     public void ListResults_FactoryExpression() {
-        SearchResults<Employee> results = query().from(employee)
+        QueryResults<Employee> results = query().from(employee)
                 .limit(10).offset(1).orderBy(employee.id.asc())
                 .listResults(employee);
         assertEquals(10, results.getTotal());

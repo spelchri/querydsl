@@ -13,30 +13,33 @@ import com.querydsl.core.types.path.TimePath;
 
 public class JodaTimeTemplatesTest {
     
-    private CollQuery query = new CollQuery(JodaTimeTemplates.DEFAULT);
+    private CollQuery<Void> query = new CollQuery<Void>(JodaTimeTemplates.DEFAULT);
     
     @Test
     public void DateTime() {
         DateTimePath<DateTime> entity = new DateTimePath<DateTime>(DateTime.class, "entity");
         query.from(entity, Arrays.asList(new DateTime(), new DateTime(0l)))
-             .list(entity.year(), entity.yearMonth(), entity.month(), entity.week(),
+             .select(entity.year(), entity.yearMonth(), entity.month(), entity.week(),
                    entity.dayOfMonth(), entity.dayOfWeek(), entity.dayOfYear(),
-                   entity.hour(), entity.minute(), entity.second(), entity.milliSecond());        
+                   entity.hour(), entity.minute(), entity.second(), entity.milliSecond())
+             .list();
     }
     
     @Test
     public void LocalDate() {
         DatePath<LocalDate> entity = new DatePath<LocalDate>(LocalDate.class, "entity");
         query.from(entity, Arrays.asList(new LocalDate(), new LocalDate(0l)))
-             .list(entity.year(), entity.yearMonth(), entity.month(), entity.week(),
-                   entity.dayOfMonth(), entity.dayOfWeek(), entity.dayOfYear());
+             .select(entity.year(), entity.yearMonth(), entity.month(), entity.week(),
+                   entity.dayOfMonth(), entity.dayOfWeek(), entity.dayOfYear())
+             .list();
     }
     
     @Test
     public void LocalTime() {
         TimePath<LocalTime> entity = new TimePath<LocalTime>(LocalTime.class, "entity");
         query.from(entity, Arrays.asList(new LocalTime(), new LocalTime(0l)))
-             .list(entity.hour(), entity.minute(), entity.second(), entity.milliSecond());
+             .select(entity.hour(), entity.minute(), entity.second(), entity.milliSecond())
+             .list();
     }
 
 }

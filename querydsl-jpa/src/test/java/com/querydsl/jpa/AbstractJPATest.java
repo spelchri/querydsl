@@ -497,7 +497,7 @@ public abstract class AbstractJPATest {
     @Test
     public void DistinctResults() {
         System.out.println("-- list results");
-        SearchResults<Date> res = query().from(cat).limit(2).listResults(cat.birthdate);
+        QueryResults<Date> res = query().from(cat).limit(2).listResults(cat.birthdate);
         assertEquals(2, res.getResults().size());
         assertEquals(6l, res.getTotal());
         System.out.println();
@@ -706,7 +706,7 @@ public abstract class AbstractJPATest {
     public void GroupBy_Count() {
         List<Integer> ids = query().from(cat).groupBy(cat.id).list(cat.id);
         long count = query().from(cat).groupBy(cat.id).count();
-        SearchResults<Integer> results = query().from(cat).groupBy(cat.id)
+        QueryResults<Integer> results = query().from(cat).groupBy(cat.id)
                 .limit(1).listResults(cat.id);
 
         long catCount = query().from(cat).count();
@@ -720,7 +720,7 @@ public abstract class AbstractJPATest {
     @Ignore // FIXME
     public void GroupBy_Distinct_Count() {
         List<Integer> ids = query().from(cat).groupBy(cat.id).distinct().list(NumberTemplate.ONE);
-        SearchResults<Integer> results = query().from(cat).groupBy(cat.id)
+        QueryResults<Integer> results = query().from(cat).groupBy(cat.id)
                 .limit(1).distinct().listResults(NumberTemplate.ONE);
 
         assertEquals(1, ids.size());
@@ -1500,7 +1500,7 @@ public abstract class AbstractJPATest {
 
     @Test
     public void TupleProjection_As_SearchResults() {
-        SearchResults<Tuple> tuples = query().from(cat).limit(1)
+        QueryResults<Tuple> tuples = query().from(cat).limit(1)
                 .listResults(cat.name, cat);
         assertEquals(1, tuples.getResults().size());
         assertTrue(tuples.getTotal() > 0);

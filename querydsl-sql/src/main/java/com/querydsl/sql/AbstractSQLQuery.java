@@ -44,7 +44,7 @@ import com.querydsl.core.util.ResultSetAdapter;
  *
  * @param <Q> concrete subtype
  */
-public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends ProjectableSQLQuery<Q> {
+public abstract class AbstractSQLQuery<T, Q extends AbstractSQLQuery<T, Q>> extends ProjectableSQLQuery<T, Q> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSQLQuery.class);
 
@@ -211,13 +211,13 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
     }
 
     @Override
-    public <RT> CloseableIterator<RT> iterate(Expression<RT> expr) {
-        expr = queryMixin.setProjection(expr);
+    public CloseableIterator<T> iterate() {
+        Expression<T> expr = (Expression<T>) queryMixin.getMetadata().getProjection();
         return iterateSingle(queryMixin.getMetadata(), expr);
     }
 
     @SuppressWarnings("unchecked")
-    private <RT> CloseableIterator<RT> iterateSingle(QueryMetadata metadata, @Nullable final Expression<RT> expr) {
+    private CloseableIterator<T> iterateSingle(QueryMetadata metadata, @Nullable final Expression<T> expr) {
         SQLListenerContextImpl context = startContext(conn, queryMixin.getMetadata());
         String queryString = null;
         List<Object> constants = ImmutableList.of();
@@ -245,34 +245,34 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
             listeners.executed(context);
 
             if (expr == null) {
-                return new SQLResultIterator<RT>(configuration, stmt, rs) {
+                return new SQLResultIterator<T>(configuration, stmt, rs) {
                     @Override
-                    public RT produceNext(ResultSet rs) throws Exception {
-                        return (RT) rs.getObject(1);
+                    public T produceNext(ResultSet rs) throws Exception {
+                        return (T) rs.getObject(1);
                     }
                 };
             } else if (expr instanceof FactoryExpression) {
-                return new SQLResultIterator<RT>(configuration, stmt, rs) {
+                return new SQLResultIterator<T>(configuration, stmt, rs) {
                     @Override
-                    public RT produceNext(ResultSet rs) throws Exception {
-                        return newInstance((FactoryExpression<RT>) expr, rs, 0);
+                    public T produceNext(ResultSet rs) throws Exception {
+                        return newInstance((FactoryExpression<T>) expr, rs, 0);
                     }
                 };
             } else if (expr.equals(Wildcard.all)) {
-                return new SQLResultIterator<RT>(configuration, stmt, rs) {
+                return new SQLResultIterator<T>(configuration, stmt, rs) {
                     @Override
-                    public RT produceNext(ResultSet rs) throws Exception {
+                    public T produceNext(ResultSet rs) throws Exception {
                         Object[] rv = new Object[rs.getMetaData().getColumnCount()];
                         for (int i = 0; i < rv.length; i++) {
                             rv[i] = rs.getObject(i+1);
                         }
-                        return (RT) rv;
+                        return (T) rv;
                     }
                 };
             } else {
-                return new SQLResultIterator<RT>(configuration, stmt, rs) {
+                return new SQLResultIterator<T>(configuration, stmt, rs) {
                     @Override
-                    public RT produceNext(ResultSet rs) throws Exception {
+                    public T produceNext(ResultSet rs) throws Exception {
                         return get(rs, expr, 1, expr.getType());
                     }
                 };
@@ -289,8 +289,8 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
 
     @SuppressWarnings("unchecked")
     @Override
-    public <RT> List<RT> list(Expression<RT> expr) {
-        expr = queryMixin.setProjection(expr);
+    public List<T> list() {
+        Expression<T> expr = (Expression<T>) queryMixin.getMetadata().getProjection();
         SQLListenerContextImpl context = startContext(conn, queryMixin.getMetadata());
         String queryString = null;
         List<Object> constants = ImmutableList.of();
@@ -318,9 +318,9 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
                 listeners.executed(context);
                 try {
                     lastCell = null;
-                    final List<RT> rv = new ArrayList<RT>();
+                    final List<T> rv = new ArrayList<T>();
                     if (expr instanceof FactoryExpression) {
-                        FactoryExpression<RT> fe = (FactoryExpression<RT>) expr;
+                        FactoryExpression<T> fe = (FactoryExpression<T>) expr;
                         while (rs.next()) {
                             if (getLastCell) {
                                 lastCell = rs.getObject(fe.getArgs().size() + 1);
@@ -338,7 +338,7 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
                             for (int i = 0; i < row.length; i++) {
                                 row[i] = rs.getObject(i+1);
                             }
-                            rv.add((RT)row);
+                            rv.add((T)row);
                         }
                     } else {
                         while (rs.next()) {
@@ -378,16 +378,17 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
     }
 
     @Override
-    public <RT> SearchResults<RT> listResults(Expression<RT> expr) {
+    public QueryResults<T> listResults() {
+        Expression<T> expr = (Expression<T>) queryMixin.getMetadata().getProjection();
         QueryModifiers originalModifiers = queryMixin.getMetadata().getModifiers();
         try {
             if (configuration.getTemplates().isCountViaAnalytics()
                 && queryMixin.getMetadata().getGroupBy().isEmpty()) {
-                List<RT> results;
+                List<T> results;
                 try {
                     queryMixin.addFlag(rowCountFlag);
                     getLastCell = true;
-                    results = list(expr);
+                    results = list();
                 } finally {
                     queryMixin.removeFlag(rowCountFlag);
                 }
@@ -401,15 +402,15 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
                 } else {
                     total = count();
                 }
-                return new SearchResults<RT>(results, originalModifiers, total);
+                return new QueryResults<T>(results, originalModifiers, total);
 
             } else {
                 queryMixin.setProjection(expr);
                 long total = count();
                 if (total > 0) {
-                    return new SearchResults<RT>(list(expr), originalModifiers, total);
+                    return new QueryResults<T>(list(), originalModifiers, total);
                 } else {
-                    return SearchResults.emptyResults();
+                    return QueryResults.emptyResults();
                 }
             }
 
@@ -456,12 +457,13 @@ public abstract class AbstractSQLQuery<Q extends AbstractSQLQuery<Q>> extends Pr
     }
 
     @Override
-    public <RT> RT uniqueResult(Expression<RT> expr) {
+    public T uniqueResult() {
+        Expression<T> expr = (Expression<T>) queryMixin.getMetadata().getProjection();
         if (getMetadata().getModifiers().getLimit() == null
            && !expr.toString().contains("count(")) {
             limit(2);
         }
-        CloseableIterator<RT> iterator = iterate(expr);
+        CloseableIterator<T> iterator = iterate();
         return uniqueResult(iterator);
     }
 

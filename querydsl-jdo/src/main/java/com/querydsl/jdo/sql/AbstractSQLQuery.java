@@ -206,13 +206,13 @@ public abstract class AbstractSQLQuery<T extends AbstractSQLQuery<T>> extends Pr
     }
 
     @Override
-    public SearchResults<Tuple> listResults(Expression<?>... args) {
+    public QueryResults<Tuple> listResults(Expression<?>... args) {
         return listResults(queryMixin.createProjection(args));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <RT> SearchResults<RT> listResults(Expression<RT> expr) {
+    public <RT> QueryResults<RT> listResults(Expression<RT> expr) {
         queryMixin.setProjection(expr);
         Query countQuery = createQuery(true);
         countQuery.setUnique(true);
@@ -221,10 +221,10 @@ public abstract class AbstractSQLQuery<T extends AbstractSQLQuery<T>> extends Pr
             QueryModifiers modifiers = queryMixin.getMetadata().getModifiers();
             Query query = createQuery(false);
             reset();
-            return new SearchResults<RT>((List<RT>) execute(query, false), modifiers, total);
+            return new QueryResults<RT>((List<RT>) execute(query, false), modifiers, total);
         } else {
             reset();
-            return SearchResults.emptyResults();
+            return QueryResults.emptyResults();
         }
     }
 

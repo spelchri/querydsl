@@ -16,7 +16,7 @@ package com.querydsl.sql;
 import java.util.List;
 
 import com.mysema.commons.lang.CloseableIterator;
-import com.querydsl.core.Projectable;
+import com.querydsl.core.ProjectableQuery;
 import com.querydsl.core.Query;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
@@ -27,45 +27,41 @@ import com.querydsl.core.types.Predicate;
  * 
  * @author tiwe
  *
- * @param <Q>
- * @param <RT>
+ * @param <T>
  */
-public class UnionImpl<Q extends Query<Q> & Projectable, RT>  implements Union<RT> {
+public class UnionImpl<T, Q extends ProjectableQuery<T, Q> & Query<Q>>  implements Union<T> {
     
     private final Q query;
-    
-    private final Expression<RT> projection;
-        
-    public UnionImpl(Q query, Expression<RT> projection) {
+
+    public UnionImpl(Q query) {
         this.query = query;
-        this.projection = projection;
     }
     
     @Override
-    public List<RT> list() {
-        return query.list(projection);
+    public List<T> list() {
+        return query.list();
     }
 
     @Override
-    public CloseableIterator<RT> iterate() {
-        return query.iterate(projection);
+    public CloseableIterator<T> iterate() {
+        return query.iterate();
     }
 
     @Override
-    public Union<RT> groupBy(Expression<?>... o) {
+    public Union<T> groupBy(Expression<?>... o) {
         query.groupBy(o);
         return this;
     }
 
     @Override
-    public Union<RT> having(Predicate... o) {
+    public Union<T> having(Predicate... o) {
         query.having(o);
         return this;
     }
 
     
     @Override
-    public Union<RT> orderBy(OrderSpecifier<?>... o) {
+    public Union<T> orderBy(OrderSpecifier<?>... o) {
         query.orderBy(o);
         return this;
     }

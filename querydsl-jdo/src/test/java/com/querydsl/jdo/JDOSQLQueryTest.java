@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.querydsl.core.NonUniqueResultException;
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jdo.sql.JDOSQLQuery;
 import com.querydsl.jdo.test.domain.Product;
@@ -118,7 +118,7 @@ public class JDOSQLQueryTest extends AbstractJDOTest{
         }
 
         // listResults
-        SearchResults<String> results = sql().from(product).limit(3).listResults(product.name);
+        QueryResults<String> results = sql().from(product).limit(3).listResults(product.name);
         assertEquals(3, results.getResults().size());
         assertEquals(30l, results.getTotal());
 

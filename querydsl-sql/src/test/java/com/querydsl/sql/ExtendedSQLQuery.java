@@ -19,7 +19,7 @@ import java.util.List;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.DefaultQueryMetadata;
 import com.querydsl.core.QueryMetadata;
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.FactoryExpression;
 import com.querydsl.core.types.Projections;
@@ -58,7 +58,7 @@ public class ExtendedSQLQuery extends AbstractSQLQuery<ExtendedSQLQuery> {
         return list(createProjection(type, exprs));
     }
     
-    public <T> SearchResults<T> listResults(Class<T> type, Expression<?>... exprs) {
+    public <T> QueryResults<T> listResults(Class<T> type, Expression<?>... exprs) {
         return listResults(createProjection(type, exprs));
     }
     

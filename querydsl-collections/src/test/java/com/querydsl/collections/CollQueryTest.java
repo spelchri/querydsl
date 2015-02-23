@@ -13,11 +13,17 @@
  */
 package com.querydsl.collections;
 
+import static com.querydsl.collections.CollQueryFactory.from;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import org.junit.Test;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
@@ -25,10 +31,6 @@ import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.expr.NumberExpression;
 import com.querydsl.core.types.path.NumberPath;
 import com.querydsl.core.types.path.StringPath;
-import org.junit.Test;
-import static com.querydsl.collections.CollQueryFactory.from;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CollQueryTest extends AbstractQueryTest {
 
@@ -45,7 +47,8 @@ public class CollQueryTest extends AbstractQueryTest {
     public void InstanceOf() {
         assertEquals(
                 Arrays.asList(c1, c2),
-                query().from(cat, Arrays.asList(c1, c2)).where(cat.instanceOf(Cat.class)).list(cat));
+                query().from(cat, Arrays.asList(c1, c2)).where(cat.instanceOf(Cat.class))
+                       .list());
     }
 
     @Test
@@ -56,13 +59,15 @@ public class CollQueryTest extends AbstractQueryTest {
                 cat.birthdate.loe(new Date()), 
                 cat.birthdate.gt(new Date()),
                 cat.birthdate.goe(new Date()))
-            .list(cat);
+            .list();
     }
 
     @Test
     public void ArrayProjection() {
         // select pairs of cats with different names
-        query().from(cat, cats).from(otherCat, cats).where(cat.name.ne(otherCat.name)).list(cat.name, otherCat.name);
+        query().from(cat, cats).from(otherCat, cats).where(cat.name.ne(otherCat.name))
+               .select(cat.name, otherCat.name)
+               .list();
         assertEquals(4*3, last.res.size());
     }
 
@@ -74,51 +79,51 @@ public class CollQueryTest extends AbstractQueryTest {
                 num.shortValue(), num.stringValue() };
 
         for (Expression<?> e : expr) {
-            query().from(cat, Arrays.asList(c1, c2)).list(e);
+            query().from(cat, Arrays.asList(c1, c2)).select(e).list();
         }
 
     }
     
     @Test
     public void Clone() {
-        CollQuery query = new CollQuery().from(cat, Collections.<Cat>emptyList()).where(cat.isNotNull()).clone();
+        CollQuery<?> query = new CollQuery<Void>().from(cat, Collections.<Cat>emptyList()).where(cat.isNotNull()).clone();
         assertEquals("cat is not null", query.getMetadata().getWhere().toString());
     }
 
     @Test
     public void Primitives() {
         // select cats with kittens
-        query().from(cat, cats).where(cat.kittens.size().ne(0)).list(cat.name);
+        query().from(cat, cats).where(cat.kittens.size().ne(0)).select(cat.name).list();
         assertTrue(last.res.size() == 4);
 
         // select cats without kittens
-        query().from(cat, cats).where(cat.kittens.size().eq(0)).list(cat.name);
+        query().from(cat, cats).where(cat.kittens.size().eq(0)).select(cat.name).list();
         assertTrue(last.res.size() == 0);
     }
 
     @Test
     public void SimpleCases() {
         // select all cat names
-        query().from(cat, cats).list(cat.name);
+        query().from(cat, cats).select(cat.name).list();
         assertTrue(last.res.size() == 4);
 
         // select all kittens
-        query().from(cat, cats).list(cat.kittens);
+        query().from(cat, cats).select(cat.kittens).list();
         assertTrue(last.res.size() == 4);
 
         // select cats with kittens
-        query().from(cat, cats).where(cat.kittens.size().gt(0)).list(cat.name);
+        query().from(cat, cats).where(cat.kittens.size().gt(0)).select(cat.name).list();
         assertTrue(last.res.size() == 4);
 
         // select cats named Kitty
-        query().from(cat, cats).where(cat.name.eq("Kitty")).list(cat.name);
+        query().from(cat, cats).where(cat.name.eq("Kitty")).select(cat.name).list();
         assertTrue(last.res.size() == 1);
 
         // select cats named Kitt%
-        query().from(cat, cats).where(cat.name.matches("Kitt.*")).list(cat.name);
+        query().from(cat, cats).where(cat.name.matches("Kitt.*")).select(cat.name).list();
         assertTrue(last.res.size() == 1);
 
-        query().from(cat, cats).list(cat.bodyWeight.add(cat.weight));
+        query().from(cat, cats).select(cat.bodyWeight.add(cat.weight)).list();
     }
 
     @Test
@@ -127,19 +132,19 @@ public class CollQueryTest extends AbstractQueryTest {
         StringPath b = new StringPath("b");
         for (Tuple strs : from(a, "aa", "bb", "cc")
                 .from(b, Arrays.asList("a","b"))
-                .where(a.startsWith(b)).list(a, b)) {
+                .where(a.startsWith(b)).select(a, b).list()) {
             System.out.println(strs);
         }
 
-        query().from(cat, cats).list(cat.mate);
+        query().from(cat, cats).select(cat.mate).list();
 
-        query().from(cat, cats).list(cat.kittens);
+        query().from(cat, cats).select(cat.kittens).list();
 
-        query().from(cat, cats).where(cat.kittens.isEmpty()).list(cat);
+        query().from(cat, cats).where(cat.kittens.isEmpty()).select(cat).list();
 
-        query().from(cat, cats).where(cat.kittens.isNotEmpty()).list(cat);
+        query().from(cat, cats).where(cat.kittens.isNotEmpty()).select(cat).list();
 
-        query().from(cat, cats).where(cat.name.matches("fri.*")).list(cat.name);
+        query().from(cat, cats).where(cat.name.matches("fri.*")).select(cat.name).list();
 
     }
 
@@ -147,7 +152,7 @@ public class CollQueryTest extends AbstractQueryTest {
     public void BigDecimals() {
         NumberPath<BigDecimal> a = new NumberPath<BigDecimal>(BigDecimal.class, "cost");
         List<BigDecimal> nums = from(a, new BigDecimal("2.1"), new BigDecimal("20.21"),
-                new BigDecimal("44.4")).where(a.lt(new BigDecimal("35.1"))).list(a);
+                new BigDecimal("44.4")).where(a.lt(new BigDecimal("35.1"))).select(a).list();
 
         for (BigDecimal num : nums) {
             System.out.println(num);

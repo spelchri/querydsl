@@ -25,7 +25,7 @@ import javax.jdo.Transaction;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.jdo.test.domain.Product;
 import com.querydsl.jdo.test.domain.QProduct;
@@ -93,7 +93,7 @@ public class OrderingTest extends AbstractJDOTest {
 
     @Test
     public void SearchResults() {
-        SearchResults<String> results = query().from(product).orderBy(
+        QueryResults<String> results = query().from(product).orderBy(
                 product.name.asc()).limit(2).listResults(product.name);
         assertEquals(Arrays.asList("A0", "A1"), results.getResults());
         assertEquals(30, results.getTotal());

@@ -18,53 +18,11 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
-import com.querydsl.core.QueryMetadata;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.ConstantImpl;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.NullExpression;
-import com.querydsl.core.types.Operator;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.PathImpl;
-import com.querydsl.core.types.PathMetadataFactory;
-import com.querydsl.core.types.Template;
-import com.querydsl.core.types.expr.BooleanExpression;
-import com.querydsl.core.types.expr.BooleanOperation;
-import com.querydsl.core.types.expr.CaseBuilder;
-import com.querydsl.core.types.expr.ComparableExpression;
-import com.querydsl.core.types.expr.ComparableOperation;
-import com.querydsl.core.types.expr.DateExpression;
-import com.querydsl.core.types.expr.DateOperation;
-import com.querydsl.core.types.expr.DateTimeExpression;
-import com.querydsl.core.types.expr.DateTimeOperation;
-import com.querydsl.core.types.expr.DslExpression;
-import com.querydsl.core.types.expr.DslOperation;
-import com.querydsl.core.types.expr.NumberExpression;
-import com.querydsl.core.types.expr.NumberOperation;
-import com.querydsl.core.types.expr.SimpleExpression;
-import com.querydsl.core.types.expr.SimpleOperation;
-import com.querydsl.core.types.expr.StringExpression;
-import com.querydsl.core.types.expr.StringOperation;
-import com.querydsl.core.types.expr.TimeExpression;
-import com.querydsl.core.types.expr.TimeOperation;
-import com.querydsl.core.types.path.BooleanPath;
-import com.querydsl.core.types.path.ComparablePath;
-import com.querydsl.core.types.path.DatePath;
-import com.querydsl.core.types.path.DateTimePath;
-import com.querydsl.core.types.path.DslPath;
-import com.querydsl.core.types.path.NumberPath;
-import com.querydsl.core.types.path.SimplePath;
-import com.querydsl.core.types.path.StringPath;
-import com.querydsl.core.types.path.TimePath;
-import com.querydsl.core.types.query.ExtendedSubQueryExpression;
-import com.querydsl.core.types.query.SimpleSubQuery;
-import com.querydsl.core.types.template.BooleanTemplate;
-import com.querydsl.core.types.template.ComparableTemplate;
-import com.querydsl.core.types.template.DslTemplate;
-import com.querydsl.core.types.template.NumberTemplate;
-import com.querydsl.core.types.template.SimpleTemplate;
-import com.querydsl.core.types.template.StringTemplate;
+import com.querydsl.core.types.*;
+import com.querydsl.core.types.expr.*;
+import com.querydsl.core.types.path.*;
+import com.querydsl.core.types.template.*;
 
 /**
  * Expression factory class
@@ -251,17 +209,6 @@ public final class Expressions {
      */
     public static BooleanExpression booleanTemplate(String template, Object... args) {
         return BooleanTemplate.create(template, args);
-    }
-
-    /**
-     * Create a new SubQuery expression
-     *
-     * @param type
-     * @param metadata
-     * @return
-     */
-    public static <T> ExtendedSubQueryExpression<T> subQuery(Class<T> type, QueryMetadata metadata) {
-        return new SimpleSubQuery<T>(type, metadata);
     }
 
     /**

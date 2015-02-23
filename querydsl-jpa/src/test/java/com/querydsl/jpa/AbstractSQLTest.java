@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Target;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.testutil.ExcludeIn;
@@ -206,7 +206,7 @@ public abstract class AbstractSQLTest {
 
     @Test
     public void List_Results() {
-        SearchResults<String> results = query().from(cat).limit(3).orderBy(cat.name.asc())
+        QueryResults<String> results = query().from(cat).limit(3).orderBy(cat.name.asc())
                 .listResults(cat.name);
         assertEquals(Arrays.asList("Beck","Bobby","Harold"), results.getResults());
         assertEquals(6l, results.getTotal());

@@ -17,11 +17,11 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-public class SingleResultContractTest extends AbstractQueryTest{
+public class FirstResultContractTest extends AbstractQueryTest{
 
     @Test
     public void SingleResult() {
-        assertNotNull(CollQueryFactory.from(cat, cats).where(cat.name.isNotNull()).singleResult(cat));
+        assertNotNull(CollQueryFactory.from(cat, cats).where(cat.name.isNotNull()).firstResult());
     }
 
 }

@@ -15,7 +15,7 @@ package com.querydsl.jpa;
 
 import com.querydsl.core.QueryMetadata;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.support.ProjectableQuery;
+import com.querydsl.core.support.ProjectableQueryBase;
 import com.querydsl.core.types.CollectionExpression;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
@@ -29,7 +29,7 @@ import com.querydsl.core.types.template.NumberTemplate;
  *
  * @author tiwe
  */
-public abstract class JPAQueryBase<Q extends JPAQueryBase<Q>> extends ProjectableQuery<Q> implements JPQLQuery {
+public abstract class JPAQueryBase<Q extends JPAQueryBase<Q>> extends ProjectableQueryBase<Q> implements JPQLQuery {
 
     protected final JPAQueryMixin<Q> queryMixin;
 

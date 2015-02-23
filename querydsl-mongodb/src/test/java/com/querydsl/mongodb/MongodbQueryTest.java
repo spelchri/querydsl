@@ -31,7 +31,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 import com.mongodb.ReadPreference;
 import com.querydsl.core.NonUniqueResultException;
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.mongodb.domain.*;
 import com.querydsl.mongodb.domain.User.Gender;
 import com.querydsl.mongodb.morphia.MorphiaQuery;
@@ -93,7 +93,7 @@ public class MongodbQueryTest {
 
     @Test
     public void SingleResult_Keys() {
-        User u = where(user.firstName.eq("Jaakko")).singleResult(user.firstName);
+        User u = where(user.firstName.eq("Jaakko")).firstResult(user.firstName);
         assertEquals("Jaakko", u.getFirstName());
         assertNull(u.getLastName());
     }
@@ -107,7 +107,7 @@ public class MongodbQueryTest {
 
     @Test
     public void List_Deep_Keys() {
-        User u = where(user.firstName.eq("Jaakko")).singleResult(user.addresses.any().street);
+        User u = where(user.firstName.eq("Jaakko")).firstResult(user.addresses.any().street);
         for (Address a : u.getAddresses()) {
             assertNotNull(a.street);
             assertNull(a.city);
@@ -163,7 +163,7 @@ public class MongodbQueryTest {
 
     @Test
     public void Find_By_Id() {
-        assertNotNull(where(user.id.eq(u1.getId())).singleResult() != null);
+        assertNotNull(where(user.id.eq(u1.getId())).firstResult() != null);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class MongodbQueryTest {
 
     @Test
     public void SingleResult() {
-        where(user.firstName.isNotNull()).singleResult();
+        where(user.firstName.isNotNull()).firstResult();
     }
 
     @Test
@@ -210,7 +210,7 @@ public class MongodbQueryTest {
         ds.save(d);
         Date end = new Date(current + 2 * dayInMillis);
 
-        assertEquals(d, query(dates).where(dates.date.between(start, end)).singleResult());
+        assertEquals(d, query(dates).where(dates.date.between(start, end)).firstResult());
         assertEquals(0, query(dates).where(dates.date.between(new Date(0), start)).count());
     }
 
@@ -254,7 +254,7 @@ public class MongodbQueryTest {
 
     @Test
     public void ListResults() {
-        SearchResults<User> results = query().limit(2).orderBy(user.age.asc()).listResults();
+        QueryResults<User> results = query().limit(2).orderBy(user.age.asc()).listResults();
         assertEquals(4l, results.getTotal());
         assertEquals(2, results.getResults().size());
 
@@ -265,7 +265,7 @@ public class MongodbQueryTest {
 
     @Test
     public void EmptyResults() {
-        SearchResults<User> results = query().where(user.firstName.eq("XXX")).listResults();
+        QueryResults<User> results = query().where(user.firstName.eq("XXX")).listResults();
         assertEquals(0l, results.getTotal());
         assertEquals(Collections.emptyList(), results.getResults());
     }

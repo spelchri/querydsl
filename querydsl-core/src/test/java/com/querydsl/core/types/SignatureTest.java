@@ -41,7 +41,6 @@ public class SignatureTest {
         for (String folder : Arrays.asList(
                 "com/querydsl/core/types/expr",
                 "com/querydsl/core/types/path",
-                "com/querydsl/core/types/query",
                 "com/querydsl/core/types/template")) {
             for (String file : new File("src/main/java",folder).list()) {
                 if (file.endsWith(".java") && !file.equals("package-info.java")) {

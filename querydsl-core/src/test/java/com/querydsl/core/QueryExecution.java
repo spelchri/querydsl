@@ -21,23 +21,12 @@ import java.util.List;
 
 import org.junit.Assert;
 
-import com.mysema.commons.lang.Pair;
 import com.querydsl.core.support.QueryBase;
 import com.querydsl.core.types.CollectionExpression;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.MapExpression;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.expr.ArrayExpression;
-import com.querydsl.core.types.expr.BooleanExpression;
-import com.querydsl.core.types.expr.CollectionExpressionBase;
-import com.querydsl.core.types.expr.DateExpression;
-import com.querydsl.core.types.expr.DateTimeExpression;
-import com.querydsl.core.types.expr.ListExpression;
-import com.querydsl.core.types.expr.MapExpressionBase;
-import com.querydsl.core.types.expr.NumberExpression;
-import com.querydsl.core.types.expr.SimpleExpression;
-import com.querydsl.core.types.expr.StringExpression;
-import com.querydsl.core.types.expr.TimeExpression;
+import com.querydsl.core.types.expr.*;
 import com.querydsl.core.types.path.ListPath;
 
 /**
@@ -144,80 +133,66 @@ public abstract class QueryExecution {
         }
     }
 
-    protected abstract Pair<Projectable, Expression<?>[]> createQuery();
+    protected abstract Projectable<?> createQuery();
 
-    protected abstract Pair<Projectable, Expression<?>[]> createQuery(Predicate filter);
+    protected abstract Projectable<?> createQuery(Predicate filter);
 
     private long runCount(Predicate f) {
-        Pair<Projectable, Expression<?>[]> p = createQuery(f);
+        Projectable<?> p = createQuery(f);
         try{
-            return p.getFirst().count();
+            return p.count();
         }finally{
-            close(p.getFirst());
+            close(p);
         }
     }
 
     private long runCountDistinct(Predicate f) {
-        Pair<Projectable, Expression<?>[]> p = createQuery(f);
+        Projectable<?> p = createQuery(f);
         try{
-            ((QueryBase)p.getFirst()).distinct();
-            return p.getFirst().count();
+            ((QueryBase)p).distinct();
+            return p.count();
         }finally{
-            close(p.getFirst());
+            close(p);
         }
     }
 
     private int runFilter(Predicate f) {
-        Pair<Projectable, Expression<?>[]> p = createQuery(f);
+        Projectable<?> p = createQuery(f);
         try{
-            return p.getFirst().list(p.getSecond()).size();
-        }finally{
-            close(p.getFirst());
+            return p.list().size();
+        } finally {
+            close(p);
         }
     }
 
     private int runFilterDistinct(Predicate f) {
-        Pair<Projectable, Expression<?>[]> p = createQuery(f);
+        Projectable<?> p = createQuery(f);
         try{
-            ((QueryBase)p.getFirst()).distinct();
-            return p.getFirst().list(p.getSecond()).size();
-        }finally{
-            close(p.getFirst());
+            ((QueryBase)p).distinct();
+            return p.list().size();
+        } finally {
+            close(p);
         }
     }
 
     private int runProjection(Expression<?> pr) {
-        Pair<Projectable, Expression<?>[]> p = createQuery();
-        try{
-            if (p.getSecond().length == 0) {
-                return p.getFirst().list(pr).size();
-            } else {
-                Expression<?>[] projection = new Expression[p.getSecond().length + 1];
-                projection[0] = pr;
-                System.arraycopy(p.getSecond(), 0, projection, 1, p.getSecond().length);
-                return p.getFirst().list(projection).size();
-            }
-
-        }finally{
-            close(p.getFirst());
+        Projectable<?> p = createQuery();
+        try {
+            ((ProjectableQuery)p).select(pr);
+            return p.list().size();
+        } finally {
+            close(p);
         }
     }
 
     private int runProjectionDistinct(Expression<?> pr) {
-        Pair<Projectable, Expression<?>[]> p = createQuery();
+        Projectable<?> p = createQuery();
         try{
-            ((QueryBase)p.getFirst()).distinct();
-            if (p.getSecond().length == 0) {
-                return p.getFirst().list(pr).size();
-            } else {
-                Expression<?>[] projection = new Expression[p.getSecond().length + 1];
-                projection[0] = pr;
-                System.arraycopy(p.getSecond(), 0, projection, 1, p.getSecond().length);
-                return p.getFirst().list(projection).size();
-            }
-
+            ((QueryBase)p).distinct();
+            ((ProjectableQuery)p).select(pr);
+            return p.list().size();
         }finally{
-            close(p.getFirst());
+            close(p);
         }
     }
 

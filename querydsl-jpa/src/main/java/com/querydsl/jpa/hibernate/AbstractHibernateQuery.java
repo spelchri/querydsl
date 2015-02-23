@@ -218,12 +218,12 @@ public abstract class AbstractHibernateQuery<Q extends AbstractHibernateQuery<Q>
     }
 
     @Override
-    public SearchResults<Tuple> listResults(Expression<?>... args) {
+    public QueryResults<Tuple> listResults(Expression<?>... args) {
         return listResults(queryMixin.createProjection(args));
     }
 
     @Override
-    public <RT> SearchResults<RT> listResults(Expression<RT> expr) {
+    public <RT> QueryResults<RT> listResults(Expression<RT> expr) {
         try{
             queryMixin.setProjection(expr);
             Query countQuery = createQuery(null, true);
@@ -234,9 +234,9 @@ public abstract class AbstractHibernateQuery<Q extends AbstractHibernateQuery<Q>
                 Query query = createQuery(modifiers, false);
                 @SuppressWarnings("unchecked")
                 List<RT> list = query.list();
-                return new SearchResults<RT>(list, modifiers, total);
+                return new QueryResults<RT>(list, modifiers, total);
             } else {
-                return SearchResults.emptyResults();
+                return QueryResults.emptyResults();
             }
         }finally{
             reset();

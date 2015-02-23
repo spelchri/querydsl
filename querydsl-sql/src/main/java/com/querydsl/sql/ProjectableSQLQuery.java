@@ -26,7 +26,7 @@ import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.*;
 import com.querydsl.core.QueryFlag.Position;
 import com.querydsl.core.support.Expressions;
-import com.querydsl.core.support.ProjectableQuery;
+import com.querydsl.core.support.ProjectableQueryBase;
 import com.querydsl.core.support.QueryMixin;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.expr.Wildcard;
@@ -39,7 +39,7 @@ import com.querydsl.core.types.template.SimpleTemplate;
  *
  * @param <Q> concrete subtype
  */
-public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Query<Q>> extends ProjectableQuery<Q> implements SQLCommonQuery<Q> {
+public abstract class ProjectableSQLQuery<T, Q extends ProjectableSQLQuery<T, Q> & Query<Q>> extends ProjectableQueryBase<T, Q> implements SQLCommonQuery<Q> {
 
     private static final Path<?> defaultQueryAlias = new PathImpl(Object.class, "query");
 
@@ -141,7 +141,8 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
 
     @Override
     public boolean exists() {
-        return singleResult(NumberTemplate.ONE) != null;
+        queryMixin.setProjection(NumberTemplate.ONE);
+        return firstResult() != null;
     }
 
     public Q from(Expression<?> arg) {
@@ -259,10 +260,6 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
         return queryMixin.rightJoin(entity).on(key.on(entity));
     }
 
-    public QueryMetadata getMetadata() {
-        return queryMixin.getMetadata();
-    }
-
     @SuppressWarnings("unchecked")
     private <RT> Union<RT> innerUnion(SubQueryExpression<?>... sq) {
         queryMixin.getMetadata().setValidate(false);
@@ -272,21 +269,6 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
         this.union = UnionUtils.union(sq, unionAll);
         this.firstUnionSubQuery = sq[0];
         return new UnionImpl<Q ,RT>((Q)this, (Expression<RT>) sq[0].getMetadata().getProjection());
-    }
-
-    @Override
-    public CloseableIterator<Tuple> iterate(Expression<?>... args) {
-        return iterate(queryMixin.createProjection(args));
-    }
-
-    @Override
-    public List<Tuple> list(Expression<?>... args) {
-        return list(queryMixin.createProjection(args));
-    }
-
-    @Override
-    public SearchResults<Tuple> listResults(Expression<?>... args) {
-        return listResults(queryMixin.createProjection(args));
     }
 
     public Q on(Predicate condition) {
@@ -305,7 +287,7 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
      * @param sq
      * @return
      */
-    public <RT> Union<RT> union(ListSubQuery<RT>... sq) {
+    public <RT> Union<RT> union(SubQueryExpression<RT>... sq) {
         return innerUnion(sq);
     }
 
@@ -316,7 +298,7 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
      * @param sq
      * @return
      */
-    public <RT> Q union(Path<?> alias, ListSubQuery<RT>... sq) {
+    public <RT> Q union(Path<?> alias, SubQueryExpression<RT>... sq) {
         return from(UnionUtils.union(sq, alias, false));
     }
 
@@ -349,7 +331,7 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
      * @param sq
      * @return
      */
-    public <RT> Union<RT> unionAll(ListSubQuery<RT>... sq) {
+    public <RT> Union<RT> unionAll(SubQueryExpression<RT>... sq) {
         unionAll = true;
         return innerUnion(sq);
     }
@@ -361,7 +343,7 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
      * @param sq
      * @return
      */
-    public <RT> Q unionAll(Path<?> alias, ListSubQuery<RT>... sq) {
+    public <RT> Q unionAll(Path<?> alias, SubQueryExpression<RT>... sq) {
         return from(UnionUtils.union(sq, alias, true));
     }
 
@@ -497,11 +479,9 @@ public abstract class ProjectableSQLQuery<Q extends ProjectableSQLQuery<Q> & Que
     /**
      * Get the query as an SQL query string and bindings
      *
-     * @param exprs
      * @return
      */
-    public SQLBindings getSQL(Expression<?>... exprs) {
-        queryMixin.setProjection(exprs);
+    public SQLBindings getSQL() {
         SQLSerializer serializer = serialize(false);
         ImmutableList.Builder<Object> args = ImmutableList.builder();
         Map<ParamExpression<?>, Object> params = getMetadata().getParams();

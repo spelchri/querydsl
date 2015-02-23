@@ -179,7 +179,7 @@ public abstract class AbstractHibernateSQLQuery<Q extends AbstractHibernateSQLQu
     }
 
     @Override
-    public <RT> SearchResults<RT> listResults(Expression<RT> projection) {
+    public <RT> QueryResults<RT> listResults(Expression<RT> projection) {
         // TODO : handle entity projections as well
         try {
             queryMixin.setProjection(projection);
@@ -190,9 +190,9 @@ public abstract class AbstractHibernateSQLQuery<Q extends AbstractHibernateSQLQu
                 query = createQuery(false);
                 @SuppressWarnings("unchecked")
                 List<RT> list = query.list();
-                return new SearchResults<RT>(list, modifiers, total);
+                return new QueryResults<RT>(list, modifiers, total);
             } else {
-                return SearchResults.emptyResults();
+                return QueryResults.emptyResults();
             }
         } finally {
             reset();

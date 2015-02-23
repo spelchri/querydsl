@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.mysema.commons.lang.CloseableIterator;
 import com.querydsl.core.DefaultQueryMetadata;
 import com.querydsl.core.QueryMetadata;
-import com.querydsl.core.SearchResults;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 
@@ -67,12 +67,12 @@ class QueryHelper extends JPAQueryBase<QueryHelper> {
     }
 
     @Nullable
-    public SearchResults<Tuple> listResults(Expression<?>... args) {
+    public QueryResults<Tuple> listResults(Expression<?>... args) {
         throw new UnsupportedOperationException();
     }
     
     @Nullable
-    public <RT> SearchResults<RT> listResults(Expression<RT> expr) {
+    public <RT> QueryResults<RT> listResults(Expression<RT> expr) {
         throw new UnsupportedOperationException();
     }
 
