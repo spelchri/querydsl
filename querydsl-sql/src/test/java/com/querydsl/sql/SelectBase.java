@@ -401,7 +401,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({CUBRID, DB2, DERBY, HSQLDB, POSTGRESQL, SQLITE})
+    @ExcludeIn({CUBRID, DB2, DERBY, HSQLDB, POSTGRESQL, SQLITE, TERADATA})
     public void Dates() {
         long ts = ((long)Math.floor(System.currentTimeMillis() / 1000)) * 1000;
         long tsDate = new org.joda.time.LocalDate(ts).toDateMidnight().getMillis();
@@ -453,7 +453,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({CUBRID, SQLITE})
+    @ExcludeIn({CUBRID, SQLITE, TERADATA})
     public void Dates_Literals() {
         if (configuration.getUseLiterals()) {
             Dates();
@@ -483,9 +483,9 @@ public class SelectBase extends AbstractBaseTest {
         add(exprs, SQLExpressions.addYears(dt, 1));
         add(exprs, SQLExpressions.addMonths(dt, 1));
         add(exprs, SQLExpressions.addDays(dt, 1));
-        add(exprs, SQLExpressions.addHours(dt, 1));
-        add(exprs, SQLExpressions.addMinutes(dt, 1));
-        add(exprs, SQLExpressions.addSeconds(dt, 1));
+        add(exprs, SQLExpressions.addHours(dt, 1), TERADATA);
+        add(exprs, SQLExpressions.addMinutes(dt, 1), TERADATA);
+        add(exprs, SQLExpressions.addSeconds(dt, 1), TERADATA);
 
         for (Expression<?> expr : exprs) {
             assertNotNull(query().singleResult(expr));
@@ -566,7 +566,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({SQLITE}) // FIXME
+    @ExcludeIn({SQLITE, TERADATA}) // FIXME
     public void Date_Trunc2() {
         DateTimeExpression<DateTime> expr = DateTimeExpression.currentTimestamp(DateTime.class);
 
@@ -768,7 +768,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({FIREBIRD, SQLSERVER})
+    @ExcludeIn({FIREBIRD, SQLSERVER, TERADATA})
     public void GroupBy_Distinct_Count() {
         List<Integer> ids = query().from(employee).groupBy(employee.id).distinct().list(NumberTemplate.ONE);
         SearchResults<Integer> results = query().from(employee).groupBy(employee.id)
@@ -804,7 +804,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({DERBY, FIREBIRD, SQLITE, SQLSERVER})
+    @ExcludeIn({DERBY, FIREBIRD, SQLITE, SQLSERVER, TERADATA})
     public void In_Long_List() {
         List<Integer> ids = Lists.newArrayList();
         for (int i = 0; i < 20000; i++) {
@@ -816,7 +816,7 @@ public class SelectBase extends AbstractBaseTest {
     }
 
     @Test
-    @ExcludeIn({DERBY, FIREBIRD, SQLITE, SQLSERVER})
+    @ExcludeIn({DERBY, FIREBIRD, SQLITE, SQLSERVER, TERADATA})
     public void NotIn_Long_List() {
         List<Integer> ids = Lists.newArrayList();
         for (int i = 0; i < 20000; i++) {
