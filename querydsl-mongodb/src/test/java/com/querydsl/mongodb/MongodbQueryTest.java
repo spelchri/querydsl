@@ -36,10 +36,12 @@ import com.querydsl.core.testutil.ExternalDB;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.path.StringPath;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.mongodb.domain.*;
 import com.querydsl.mongodb.domain.User.Gender;
 import com.querydsl.mongodb.morphia.MorphiaQuery;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.testutil.ExternalDB;
 
 @Category(ExternalDB.class)
 public class MongodbQueryTest {
