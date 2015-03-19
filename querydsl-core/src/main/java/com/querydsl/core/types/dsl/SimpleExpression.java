@@ -59,7 +59,7 @@ public abstract class SimpleExpression<T> extends DslExpression<T> {
     @Override
     @SuppressWarnings("unchecked")
     public SimpleExpression<T> as(Path<T> alias) {
-        return Expressions.operation((Class<T>)getType(),Ops.ALIAS, mixin, alias);
+        return Expressions.operation(getType(),Ops.ALIAS, mixin, alias);
     }
 
     /**
@@ -289,7 +289,7 @@ public abstract class SimpleExpression<T> extends DslExpression<T> {
      */
     @SuppressWarnings("unchecked")
     public SimpleExpression<T> nullif(Expression<T> other) {
-        return Expressions.operation((Class<T>)this.getType(), Ops.NULLIF, this, other);
+        return Expressions.operation(this.getType(), Ops.NULLIF, this, other);
     }
 
     /**

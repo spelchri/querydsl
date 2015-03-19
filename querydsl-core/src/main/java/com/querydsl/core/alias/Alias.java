@@ -212,7 +212,7 @@ public final class Alias {
      */
     @SuppressWarnings("unchecked")
     public static <D> Expression<D> getAny(D arg) {
-        Expression<D> current = (Expression<D>) aliasFactory.getCurrentAndReset();
+        Expression<D> current = aliasFactory.getCurrentAndReset();
         if (current != null) {
             return current;
         } else if (arg instanceof ManagedObject) {

@@ -122,7 +122,7 @@ public final class CollQuerySerializer extends SerializerBase<CollQuerySerialize
         } else {
             List<Object> args = new ArrayList<Object>(2);
             if (path.getMetadata().getParent() != null) {
-                args.add((Expression<?>)path.getMetadata().getParent());
+                args.add(path.getMetadata().getParent());
             }
             args.add(path.getMetadata().getElement());
             final Template template = getTemplate(pathType);

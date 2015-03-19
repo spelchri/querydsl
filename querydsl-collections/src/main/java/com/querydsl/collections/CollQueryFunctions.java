@@ -13,10 +13,11 @@
  */
 package com.querydsl.collections;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.querydsl.core.types.Expression;
@@ -49,7 +50,7 @@ public final class CollQueryFunctions {
         @Override
         public Number apply(Number num1, Number num2) {
             if (num1.getClass().equals(num2.getClass()) && num1 instanceof Comparable) {
-                return ((Comparable)num1).compareTo((Comparable)num2) < 0 ? num2 : num1;
+                return ((Comparable)num1).compareTo(num2) < 0 ? num2 : num1;
             } else {
                 BigDecimal n1 = new BigDecimal(num1.toString());
                 BigDecimal n2 = new BigDecimal(num2.toString());
@@ -62,7 +63,7 @@ public final class CollQueryFunctions {
         @Override
         public Number apply(Number num1, Number num2) {
             if (num1.getClass().equals(num2.getClass()) && num1 instanceof Comparable) {
-                return ((Comparable)num1).compareTo((Comparable)num2) < 0 ? num1 : num2;
+                return ((Comparable)num1).compareTo(num2) < 0 ? num1 : num2;
             } else {
                 BigDecimal n1 = new BigDecimal(num1.toString());
                 BigDecimal n2 = new BigDecimal(num2.toString());

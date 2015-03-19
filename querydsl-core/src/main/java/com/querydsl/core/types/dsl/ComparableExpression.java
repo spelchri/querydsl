@@ -35,7 +35,7 @@ public abstract class ComparableExpression<T extends Comparable> extends Compara
     
     @Override
     public ComparableExpression<T> as(Path<T> alias) {
-        return Expressions.<T>comparableOperation((Class)getType(), Ops.ALIAS, mixin, alias);
+        return Expressions.comparableOperation(getType(), Ops.ALIAS, mixin, alias);
     }
     
     @Override

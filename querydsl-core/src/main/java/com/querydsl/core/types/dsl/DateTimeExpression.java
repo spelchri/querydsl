@@ -96,7 +96,7 @@ public abstract class DateTimeExpression<T extends Comparable> extends TemporalE
 
     @Override
     public DateTimeExpression<T> as(Path<T> alias) {
-        return Expressions.dateTimeOperation((Class<T>)getType(), Ops.ALIAS, mixin, alias);
+        return Expressions.dateTimeOperation(getType(), Ops.ALIAS, mixin, alias);
     }
 
     @Override
@@ -161,7 +161,7 @@ public abstract class DateTimeExpression<T extends Comparable> extends TemporalE
      */
     public DateTimeExpression<T> max() {
         if (max == null) {
-            max = Expressions.dateTimeOperation((Class<T>)getType(), Ops.AggOps.MAX_AGG, mixin);
+            max = Expressions.dateTimeOperation(getType(), Ops.AggOps.MAX_AGG, mixin);
         }
         return max;
     }
@@ -186,7 +186,7 @@ public abstract class DateTimeExpression<T extends Comparable> extends TemporalE
      */
     public DateTimeExpression<T> min() {
         if (min == null) {
-            min = Expressions.dateTimeOperation((Class<T>)getType(), Ops.AggOps.MIN_AGG, mixin);
+            min = Expressions.dateTimeOperation(getType(), Ops.AggOps.MIN_AGG, mixin);
         }
         return min;
     }

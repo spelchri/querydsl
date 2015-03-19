@@ -71,7 +71,7 @@ public abstract class DateExpression<T extends Comparable> extends TemporalExpre
 
     @Override
     public DateExpression<T> as(Path<T> alias) {
-        return Expressions.dateOperation((Class<T>)getType(), Ops.ALIAS, mixin, alias);
+        return Expressions.dateOperation(getType(), Ops.ALIAS, mixin, alias);
     }
 
     @Override

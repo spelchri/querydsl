@@ -17,8 +17,6 @@ import java.sql.Time;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.querydsl.core.QueryMetadata;
 import com.querydsl.core.Tuple;
@@ -51,9 +49,9 @@ public final class Expressions {
     @SuppressWarnings("unchecked")
     public static <D> SimpleExpression<D> as(Expression<D> source, Path<D> alias) {
         if (source == null) {
-            return as((Expression)nullExpression(), alias);
+            return as(Expressions.<D>nullExpression(), alias);
         } else {
-            return Expressions.operation((Class<D>) alias.getType(), Ops.ALIAS, source, alias);
+            return Expressions.operation(alias.getType(), Ops.ALIAS, source, alias);
         }
     }
 
@@ -101,7 +99,6 @@ public final class Expressions {
      * @param exprs
      * @return
      */
-    @Nullable
     public static BooleanExpression allOf(BooleanExpression... exprs) {
         return BooleanExpression.allOf(exprs);
     }
@@ -112,7 +109,6 @@ public final class Expressions {
      * @param exprs
      * @return
      */
-    @Nullable
     public static BooleanExpression anyOf(BooleanExpression... exprs) {
         return BooleanExpression.anyOf(exprs);
     }
@@ -151,7 +147,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> template(Class<T> cl, String template, Object... args) {
+    public static <T> SimpleTemplate<T> template(Class<? extends T> cl, String template, Object... args) {
         return simpleTemplate(cl, template, args);
     }
 
@@ -163,7 +159,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> template(Class<T> cl, String template, ImmutableList<?> args) {
+    public static <T> SimpleTemplate<T> template(Class<? extends T> cl, String template, ImmutableList<?> args) {
         return simpleTemplate(cl, template, args);
     }
 
@@ -175,7 +171,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> template(Class<T> cl, Template template, Object... args) {
+    public static <T> SimpleTemplate<T> template(Class<? extends T> cl, Template template, Object... args) {
         return simpleTemplate(cl, template, args);
     }
 
@@ -187,7 +183,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> simpleTemplate(Class<T> cl, String template, Object... args) {
+    public static <T> SimpleTemplate<T> simpleTemplate(Class<? extends T> cl, String template, Object... args) {
         return new SimpleTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
 
@@ -199,7 +195,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> simpleTemplate(Class<T> cl, String template, ImmutableList<?> args) {
+    public static <T> SimpleTemplate<T> simpleTemplate(Class<? extends T> cl, String template, ImmutableList<?> args) {
         return new SimpleTemplate<T>(cl, createTemplate(template), args);
     }
 
@@ -211,7 +207,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleTemplate<T> simpleTemplate(Class<T> cl, Template template, Object... args) {
+    public static <T> SimpleTemplate<T> simpleTemplate(Class<? extends T> cl, Template template, Object... args) {
         return new SimpleTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
 
@@ -223,7 +219,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> DslTemplate<T> dslTemplate(Class<T> cl, String template, Object... args) {
+    public static <T> DslTemplate<T> dslTemplate(Class<? extends T> cl, String template, Object... args) {
         return new DslTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
 
@@ -235,7 +231,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> DslTemplate<T> dslTemplate(Class<T> cl, String template, ImmutableList<?> args) {
+    public static <T> DslTemplate<T> dslTemplate(Class<? extends T> cl, String template, ImmutableList<?> args) {
         return new DslTemplate<T>(cl, createTemplate(template), args);
     }
 
@@ -247,7 +243,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> DslTemplate<T> dslTemplate(Class<T> cl, Template template, Object... args) {
+    public static <T> DslTemplate<T> dslTemplate(Class<? extends T> cl, Template template, Object... args) {
         return new DslTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
 
@@ -259,7 +255,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<? extends T> cl,
             String template, Object... args) {
         return new ComparableTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -272,7 +268,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<? extends T> cl,
                                                                                      String template, ImmutableList<?> args) {
         return new ComparableTemplate<T>(cl, createTemplate(template), args);
     }
@@ -285,7 +281,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> ComparableTemplate<T> comparableTemplate(Class<? extends T> cl,
                                                                                      Template template, Object... args) {
         return new ComparableTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -298,7 +294,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<? extends T> cl,
                                                                          String template, Object... args) {
         return new DateTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -311,7 +307,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<? extends T> cl,
                                                                          String template, ImmutableList<?> args) {
         return new DateTemplate<T>(cl, createTemplate(template), args);
     }
@@ -324,7 +320,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTemplate<T> dateTemplate(Class<? extends T> cl,
                                                                          Template template, Object... args) {
         return new DateTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -337,7 +333,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<? extends T> cl,
                                                                                  String template, Object... args) {
         return new DateTimeTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -350,7 +346,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<? extends T> cl,
                                                                                    String template, ImmutableList<?> args) {
         return new DateTimeTemplate<T>(cl, createTemplate(template), args);
     }
@@ -363,7 +359,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> DateTimeTemplate<T> dateTimeTemplate(Class<? extends T> cl,
                                                                                    Template template, Object... args) {
         return new DateTimeTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -376,7 +372,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<? extends T> cl,
                                                                            String template, Object... args) {
         return new TimeTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -389,7 +385,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<? extends T> cl,
                                                                            String template, ImmutableList<?> args) {
         return new TimeTemplate<T>(cl, createTemplate(template), args);
     }
@@ -402,7 +398,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<T> cl,
+    public static <T extends Comparable<?>> TimeTemplate<T> timeTemplate(Class<? extends T> cl,
                                                                            Template template, Object... args) {
         return new TimeTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -415,7 +411,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<T> cl,
+    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<? extends T> cl,
                                                                      String template, Object... args) {
         return new EnumTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -428,7 +424,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<T> cl,
+    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<? extends T> cl,
                                                                      String template, ImmutableList<?> args) {
         return new EnumTemplate<T>(cl, createTemplate(template), args);
     }
@@ -441,7 +437,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<T> cl,
+    public static <T extends Enum<T>> EnumTemplate<T> enumTemplate(Class<? extends T> cl,
                                                                      Template template, Object... args) {
         return new EnumTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -454,7 +450,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<T> cl,
+    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<? extends T> cl,
             String template, Object... args) {
         return new NumberTemplate<T>(cl, createTemplate(template), ImmutableList.copyOf(args));
     }
@@ -467,7 +463,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<T> cl,
+    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<? extends T> cl,
                                                                                         String template, ImmutableList<?> args) {
         return new NumberTemplate<T>(cl, createTemplate(template), args);
     }
@@ -481,7 +477,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<T> cl,
+    public static <T extends Number & Comparable<?>> NumberTemplate<T> numberTemplate(Class<? extends T> cl,
                                                                                         Template template, Object... args) {
         return new NumberTemplate<T>(cl, template, ImmutableList.copyOf(args));
     }
@@ -583,7 +579,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleOperation<T> operation(Class<T> type, Operator operator,
+    public static <T> SimpleOperation<T> operation(Class<? extends T> type, Operator operator,
             Expression<?>... args) {
         return simpleOperation(type, operator, args);
 
@@ -597,8 +593,8 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> SimpleOperation<T> simpleOperation(Class<T> type, Operator operator,
-                                                          Expression<?>... args) {
+    public static <T> SimpleOperation<T> simpleOperation(Class<? extends T> type, Operator operator,
+                                                         Expression<?>... args) {
         return new SimpleOperation<T>(type, operator, args);
     }
 
@@ -610,7 +606,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T> DslOperation<T> dslOperation(Class<T> type, Operator operator,
+    public static <T> DslOperation<T> dslOperation(Class<? extends T> type, Operator operator,
             Expression<?>... args) {
         return new DslOperation<T>(type, operator, args);
     }
@@ -634,7 +630,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> ComparableOperation<T> comparableOperation(Class<T> type,
+    public static <T extends Comparable<?>> ComparableOperation<T> comparableOperation(Class<? extends T> type,
             Operator operator, Expression<?>... args) {
         return new ComparableOperation<T>(type, operator, args);
     }
@@ -647,7 +643,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateOperation<T> dateOperation(Class<T> type,
+    public static <T extends Comparable<?>> DateOperation<T> dateOperation(Class<? extends T> type,
             Operator operator, Expression<?>... args) {
         return new DateOperation<T>(type, operator, args);
     }
@@ -660,7 +656,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> DateTimeOperation<T> dateTimeOperation(Class<T> type,
+    public static <T extends Comparable<?>> DateTimeOperation<T> dateTimeOperation(Class<? extends T> type,
             Operator operator, Expression<?>... args) {
         return new DateTimeOperation<T>(type, operator, args);
     }
@@ -673,7 +669,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Comparable<?>> TimeOperation<T> timeOperation(Class<T> type,
+    public static <T extends Comparable<?>> TimeOperation<T> timeOperation(Class<? extends T> type,
             Operator operator, Expression<?>... args) {
         return new TimeOperation<T>(type, operator, args);
     }
@@ -686,7 +682,7 @@ public final class Expressions {
      * @param args
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberOperation<T> numberOperation(Class<T> type,
+    public static <T extends Number & Comparable<?>> NumberOperation<T> numberOperation(Class<? extends T> type,
             Operator operator, Expression<?>... args) {
         return new NumberOperation<T>(type, operator, args);
     }
@@ -709,7 +705,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T> SimplePath<T> path(Class<T> type, String variable) {
+    public static <T> SimplePath<T> path(Class<? extends T> type, String variable) {
         return simplePath(type, variable);
     }
 
@@ -721,7 +717,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T> SimplePath<T> path(Class<T> type, Path<?> parent, String property) {
+    public static <T> SimplePath<T> path(Class<? extends T> type, Path<?> parent, String property) {
         return simplePath(type, parent, property);
     }
 
@@ -733,7 +729,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T> SimplePath<T> path(Class<T> type, PathMetadata metadata) {
+    public static <T> SimplePath<T> path(Class<? extends T> type, PathMetadata metadata) {
         return simplePath(type, metadata);
     }
 
@@ -744,7 +740,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T> SimplePath<T> simplePath(Class<T> type, String variable) {
+    public static <T> SimplePath<T> simplePath(Class<? extends T> type, String variable) {
         return new SimplePath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -756,7 +752,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T> SimplePath<T> simplePath(Class<T> type, Path<?> parent, String property) {
+    public static <T> SimplePath<T> simplePath(Class<? extends T> type, Path<?> parent, String property) {
         return new SimplePath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
 
@@ -768,7 +764,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T> SimplePath<T> simplePath(Class<T> type, PathMetadata metadata) {
+    public static <T> SimplePath<T> simplePath(Class<? extends T> type, PathMetadata metadata) {
         return new SimplePath<T>(type, metadata);
     }
 
@@ -779,7 +775,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T> DslPath<T> dslPath(Class<T> type, String variable) {
+    public static <T> DslPath<T> dslPath(Class<? extends T> type, String variable) {
         return new DslPath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -791,7 +787,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T> DslPath<T> dslPath(Class<T> type, Path<?> parent, String property) {
+    public static <T> DslPath<T> dslPath(Class<? extends T> type, Path<?> parent, String property) {
         return new DslPath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
 
@@ -803,7 +799,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T> DslPath<T> dslPath(Class<T> type, PathMetadata metadata) {
+    public static <T> DslPath<T> dslPath(Class<? extends T> type, PathMetadata metadata) {
         return new DslPath<T>(type, metadata);
     }
 
@@ -814,7 +810,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<T> type,
+    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<? extends T> type,
             String variable) {
         return new ComparablePath<T>(type, PathMetadataFactory.forVariable(variable));
     }
@@ -827,7 +823,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<T> type,
+    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<? extends T> type,
             Path<?> parent, String property) {
         return new ComparablePath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -840,7 +836,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<T> type,
+    public static <T extends Comparable<?>> ComparablePath<T> comparablePath(Class<? extends T> type,
                                                                              PathMetadata metadata) {
         return new ComparablePath<T>(type, metadata);
     }
@@ -852,7 +848,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<T> type,
+    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<? extends T> type,
                                                                              String variable) {
         return new ComparableEntityPath<T>(type, PathMetadataFactory.forVariable(variable));
     }
@@ -865,7 +861,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<T> type,
+    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<? extends T> type,
                                                                              Path<?> parent, String property) {
         return new ComparableEntityPath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -878,7 +874,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<T> type,
+    public static <T extends Comparable<?>> ComparableEntityPath<T> comparableEntityPath(Class<? extends T> type,
                                                                              PathMetadata metadata) {
         return new ComparableEntityPath<T>(type, metadata);
     }
@@ -890,7 +886,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Comparable<?>> DatePath<T> datePath(Class<T> type, String variable) {
+    public static <T extends Comparable<?>> DatePath<T> datePath(Class<? extends T> type, String variable) {
         return new DatePath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -902,7 +898,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Comparable<?>> DatePath<T> datePath(Class<T> type, Path<?> parent,
+    public static <T extends Comparable<?>> DatePath<T> datePath(Class<? extends T> type, Path<?> parent,
             String property) {
         return new DatePath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -915,7 +911,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Comparable<?>> DatePath<T> datePath(Class<T> type, PathMetadata metadata) {
+    public static <T extends Comparable<?>> DatePath<T> datePath(Class<? extends T> type, PathMetadata metadata) {
         return new DatePath<T>(type, metadata);
     }
 
@@ -926,7 +922,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<T> type, String variable) {
+    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<? extends T> type, String variable) {
         return new DateTimePath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -938,7 +934,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<T> type, Path<?> parent,
+    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<? extends T> type, Path<?> parent,
             String property) {
         return new DateTimePath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -951,7 +947,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<T> type, PathMetadata metadata) {
+    public static <T extends Comparable<?>> DateTimePath<T> dateTimePath(Class<? extends T> type, PathMetadata metadata) {
         return new DateTimePath<T>(type, metadata);
     }
 
@@ -962,7 +958,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Comparable<?>> TimePath<T> timePath(Class<T> type, String variable) {
+    public static <T extends Comparable<?>> TimePath<T> timePath(Class<? extends T> type, String variable) {
         return new TimePath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -974,7 +970,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Comparable<?>> TimePath<T> timePath(Class<T> type, Path<?> parent,
+    public static <T extends Comparable<?>> TimePath<T> timePath(Class<? extends T> type, Path<?> parent,
             String property) {
         return new TimePath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -987,7 +983,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Comparable<?>> TimePath<T> timePath(Class<T> type, PathMetadata metadata) {
+    public static <T extends Comparable<?>> TimePath<T> timePath(Class<? extends T> type, PathMetadata metadata) {
         return new TimePath<T>(type, metadata);
     }
 
@@ -998,7 +994,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<T> type,
+    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<? extends T> type,
             String variable) {
         return new NumberPath<T>(type, PathMetadataFactory.forVariable(variable));
     }
@@ -1011,7 +1007,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<T> type,
+    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<? extends T> type,
             Path<?> parent, String property) {
         return new NumberPath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
@@ -1024,7 +1020,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<T> type, PathMetadata metadata) {
+    public static <T extends Number & Comparable<?>> NumberPath<T> numberPath(Class<? extends T> type, PathMetadata metadata) {
         return new NumberPath<T>(type, metadata);
     }
 
@@ -1165,7 +1161,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Enum<T>> EnumOperation<T> enumOperation(Class<T> type, Operator operator,
+    public static <T extends Enum<T>> EnumOperation<T> enumOperation(Class<? extends T> type, Operator operator,
                                                                       Expression<?>... args) {
         return new EnumOperation<T>(type, operator, args);
     }
@@ -1177,7 +1173,7 @@ public final class Expressions {
      * @param variable
      * @return
      */
-    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<T> type, String variable) {
+    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<? extends T> type, String variable) {
         return new EnumPath<T>(type, PathMetadataFactory.forVariable(variable));
     }
 
@@ -1189,7 +1185,7 @@ public final class Expressions {
      * @param property
      * @return
      */
-    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<T> type, Path<?> parent, String property) {
+    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<? extends T> type, Path<?> parent, String property) {
         return new EnumPath<T>(type, PathMetadataFactory.forProperty(parent, property));
     }
 
@@ -1201,7 +1197,7 @@ public final class Expressions {
      * @param <T>
      * @return
      */
-    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<T> type, PathMetadata metadata) {
+    public static <T extends Enum<T>> EnumPath<T> enumPath(Class<? extends T> type, PathMetadata metadata) {
         return new EnumPath<T>(type, metadata);
     }
 
